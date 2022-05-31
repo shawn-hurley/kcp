@@ -56,8 +56,10 @@ func TestPlacementReconciler(t *testing.T) {
 		"no placement, no binding, no locations, no workload cluster": {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test",
-					ClusterName: "root:org:ws",
+					Name: "test",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
+					},
 				},
 			},
 			wantReconcileStatus: reconcileStatusContinue,
@@ -65,10 +67,10 @@ func TestPlacementReconciler(t *testing.T) {
 		"existing placement, no binding, no locations, no workspaces workload cluster": {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test",
-					ClusterName: "root:org:ws",
+					Name: "test",
 					Annotations: map[string]string{
-						"scheduling.kcp.dev/placement": `{"foo": "bar"}`,
+						"scheduling.kcp.dev/placement":             `{"foo": "bar"}`,
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
 					},
 				},
 			},
@@ -78,10 +80,10 @@ func TestPlacementReconciler(t *testing.T) {
 		"existing placement, with binding, no locations, no workspaces workload cluster": {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test",
-					ClusterName: "root:org:ws",
+					Name: "test",
 					Annotations: map[string]string{
-						"scheduling.kcp.dev/placement": `{"foo": "bar"}`,
+						"scheduling.kcp.dev/placement":             `{"foo": "bar"}`,
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
 					},
 				},
 			},
@@ -95,13 +97,13 @@ func TestPlacementReconciler(t *testing.T) {
 		"scheduling disabled": {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test",
-					ClusterName: "root:org:ws",
+					Name: "test",
 					Labels: map[string]string{
 						"experimental.workloads.kcp.dev/scheduling-disabled": "true",
 					},
 					Annotations: map[string]string{
-						"scheduling.kcp.dev/placement": `{"foo": "bar"}`,
+						"scheduling.kcp.dev/placement":             `{"foo": "bar"}`,
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
 					},
 				},
 			},
@@ -110,8 +112,10 @@ func TestPlacementReconciler(t *testing.T) {
 		"no placement, with workload cluster, but no location": {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test",
-					ClusterName: "root:org:ws",
+					Name: "test",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
+					},
 				},
 			},
 			apibindings: map[logicalcluster.Name][]*apisv1alpha1.APIBinding{logicalcluster.New("root:org:ws"): {
@@ -126,8 +130,10 @@ func TestPlacementReconciler(t *testing.T) {
 		"no placement, with location, no workload cluster": {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test",
-					ClusterName: "root:org:ws",
+					Name: "test",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
+					},
 				},
 			},
 			apibindings: map[logicalcluster.Name][]*apisv1alpha1.APIBinding{logicalcluster.New("root:org:ws"): {
@@ -143,8 +149,10 @@ func TestPlacementReconciler(t *testing.T) {
 		"no placement, with location, no workload cluster, not bound binding": {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test",
-					ClusterName: "root:org:ws",
+					Name: "test",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
+					},
 				},
 			},
 			apibindings: map[logicalcluster.Name][]*apisv1alpha1.APIBinding{logicalcluster.New("root:org:ws"): {
@@ -159,8 +167,10 @@ func TestPlacementReconciler(t *testing.T) {
 		"no placement, with location, no workload cluster, invalid export": {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test",
-					ClusterName: "root:org:ws",
+					Name: "test",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
+					},
 				},
 			},
 			apibindings: map[logicalcluster.Name][]*apisv1alpha1.APIBinding{logicalcluster.New("root:org:ws"): {
@@ -175,8 +185,10 @@ func TestPlacementReconciler(t *testing.T) {
 		"happy case: binding, locations and ready workload cluster exist, annotation does not": {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test",
-					ClusterName: "root:org:ws",
+					Name: "test",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
+					},
 				},
 			},
 			apibindings: map[logicalcluster.Name][]*apisv1alpha1.APIBinding{logicalcluster.New("root:org:ws"): {
@@ -206,8 +218,10 @@ func TestPlacementReconciler(t *testing.T) {
 		"happy case: no location": {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test",
-					ClusterName: "root:org:ws",
+					Name: "test",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
+					},
 				},
 			},
 			apibindings: map[logicalcluster.Name][]*apisv1alpha1.APIBinding{logicalcluster.New("root:org:ws"): {
@@ -226,9 +240,9 @@ func TestPlacementReconciler(t *testing.T) {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:            "test",
-					ClusterName:     "root:org:ws",
 					ResourceVersion: "42",
 					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
 						"scheduling.kcp.dev/placement": `{
 "root:org:negotiation-workspace+us-east1+us-east1-1":"Pending",
 "root:org:negotiation-workspace+us-east2+us-east2-1":"Bound",
@@ -291,9 +305,9 @@ func TestPlacementReconciler(t *testing.T) {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:            "test",
-					ClusterName:     "root:org:ws",
 					ResourceVersion: "42",
 					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
 						"scheduling.kcp.dev/placement": `{
 "root:org:negotiation-workspace+us-east7+us-east7-1":"Pending",
 "root:org:negotiation-workspace+us-east7+us-east7-2":"Bound",
@@ -333,10 +347,10 @@ func TestPlacementReconciler(t *testing.T) {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:            "test",
-					ClusterName:     "root:org:ws",
 					ResourceVersion: "42",
 					Annotations: map[string]string{
-						"scheduling.kcp.dev/placement": `{}`,
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
+						"scheduling.kcp.dev/placement":             `{}`,
 					},
 				},
 			},
@@ -358,10 +372,10 @@ func TestPlacementReconciler(t *testing.T) {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:            "test",
-					ClusterName:     "root:org:ws",
 					ResourceVersion: "42",
 					Annotations: map[string]string{
-						"scheduling.kcp.dev/placement": `{}`,
+						"scheduling.kcp.dev/placement":             `{}`,
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
 					},
 				},
 			},
@@ -382,9 +396,9 @@ func TestPlacementReconciler(t *testing.T) {
 		"different negotiation workspace": {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test",
-					ClusterName: "root:org:ws",
+					Name: "test",
 					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
 						"scheduling.kcp.dev/placement": `{
 "root:org:negotiation-workspace+us-east1+us-east1-1":"Pending",
 "root:org:elsewhere+us-east2+us-east2-1":"Bound",
@@ -420,8 +434,10 @@ func TestPlacementReconciler(t *testing.T) {
 		"patch fails": {
 			namespace: &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test",
-					ClusterName: "root:org:ws",
+					Name: "test",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
+					},
 				},
 			},
 			apibindings: map[logicalcluster.Name][]*apisv1alpha1.APIBinding{logicalcluster.New("root:org:ws"): {

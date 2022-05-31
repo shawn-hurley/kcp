@@ -50,7 +50,7 @@ func (c *Controller) reconcileResource(ctx context.Context, lclusterName logical
 	// If the resource is not namespaced (incl if the resource is itself a
 	// namespace), ignore it.
 	if obj.GetNamespace() == "" {
-		klog.V(4).Infof("GVR %q %s|%s had no namespace; ignoring", gvr.String(), obj.GetClusterName(), obj.GetName())
+		klog.V(4).Infof("GVR %q %s|%s had no namespace; ignoring", gvr.String(), logicalcluster.From(obj).String(), obj.GetName())
 		return nil
 	}
 

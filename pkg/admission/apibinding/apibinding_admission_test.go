@@ -326,13 +326,12 @@ type bindingBuilder struct {
 }
 
 func newAPIBinding() *bindingBuilder {
-	return &bindingBuilder{
-		APIBinding: &apisv1alpha1.APIBinding{
-			ObjectMeta: metav1.ObjectMeta{
-				ClusterName: "root:org:ws",
-			},
-		},
+	bindingBuilder := &bindingBuilder{
+		APIBinding: &apisv1alpha1.APIBinding{},
 	}
+	cluster := logicalcluster.New("root:org:ws")
+	cluster.Set(bindingBuilder)
+	return bindingBuilder
 }
 
 func (b *bindingBuilder) withName(name string) *bindingBuilder {

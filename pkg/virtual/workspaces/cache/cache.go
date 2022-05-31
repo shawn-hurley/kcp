@@ -48,7 +48,8 @@ type ClusterWorkspaceCache struct {
 }
 
 func (c *ClusterWorkspaceCache) Get(lclusterName logicalcluster.Name, workspaceName string) (*workspaceapi.ClusterWorkspace, error) {
-	key := &workspaceapi.ClusterWorkspace{ObjectMeta: metav1.ObjectMeta{Name: workspaceName, ClusterName: lclusterName.String()}}
+	key := &workspaceapi.ClusterWorkspace{ObjectMeta: metav1.ObjectMeta{Name: workspaceName}}
+	lclusterName.Set(key)
 
 	// check for cluster workspace in the cache
 	clusterWorkspaceObj, exists, err := c.Store.Get(key)

@@ -149,8 +149,10 @@ func TestReconcile(t *testing.T) {
 
 			apiExport := &apisv1alpha1.APIExport{
 				ObjectMeta: metav1.ObjectMeta{
-					ClusterName: "root:org:ws",
-					Name:        "my-export",
+					Name: "my-export",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "root:org:ws",
+					},
 				},
 			}
 

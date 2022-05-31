@@ -410,15 +410,16 @@ func TestSchemaReconciler(t *testing.T) {
 }
 
 func export(clusterName logicalcluster.Name, name string, exports ...string) *apisv1alpha1.APIExport {
-	return &apisv1alpha1.APIExport{
+	apiExport := &apisv1alpha1.APIExport{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:        name,
-			ClusterName: clusterName.String(),
+			Name: name,
 		},
 		Spec: apisv1alpha1.APIExportSpec{
 			LatestResourceSchemas: exports,
 		},
 	}
+	clusterName.Set(apiExport)
+	return apiExport
 }
 
 func apiResourceSchema(clusterName logicalcluster.Name, prefix string, group string, version string, kind string) *apisv1alpha1.APIResourceSchema {
@@ -426,10 +427,9 @@ func apiResourceSchema(clusterName logicalcluster.Name, prefix string, group str
 	if nameGroup == "" {
 		nameGroup = "core"
 	}
-	return &apisv1alpha1.APIResourceSchema{
+	apiResourceSchema := &apisv1alpha1.APIResourceSchema{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:        fmt.Sprintf("%s.%ss.%s", prefix, strings.ToLower(kind), nameGroup),
-			ClusterName: clusterName.String(),
+			Name: fmt.Sprintf("%s.%ss.%s", prefix, strings.ToLower(kind), nameGroup),
 		},
 		Spec: apisv1alpha1.APIResourceSchemaSpec{
 			Group: group,
@@ -459,6 +459,8 @@ func apiResourceSchema(clusterName logicalcluster.Name, prefix string, group str
 			},
 		},
 	}
+	clusterName.Set(apiResourceSchema)
+	return apiResourceSchema
 }
 
 func withExportOwner(schema *apisv1alpha1.APIResourceSchema, exportName string) *apisv1alpha1.APIResourceSchema {

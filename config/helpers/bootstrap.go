@@ -26,6 +26,8 @@ import (
 	"io"
 	"time"
 
+	"github.com/kcp-dev/logicalcluster"
+
 	extensionsapiserver "k8s.io/apiextensions-apiserver/pkg/apiserver"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -166,9 +168,9 @@ func createResourceFromFS(ctx context.Context, client dynamic.Interface, mapper 
 	// TODO(ncdc): replace with Maru's upcoming helper
 	logName := func(o metav1.Object) string {
 		if o.GetNamespace() == "" {
-			return fmt.Sprintf("%s|%s", o.GetClusterName(), o.GetName())
+			return fmt.Sprintf("%s|%s", logicalcluster.From(o), o.GetName())
 		} else {
-			return fmt.Sprintf("%s|%s/%s", o.GetClusterName(), o.GetNamespace(), o.GetName())
+			return fmt.Sprintf("%s|%s/%s", logicalcluster.From(o), o.GetNamespace(), o.GetName())
 		}
 	}
 

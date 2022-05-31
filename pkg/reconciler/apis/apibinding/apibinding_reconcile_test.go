@@ -111,9 +111,11 @@ var (
 
 	todayWidgetsAPIResourceSchema = &apisv1alpha1.APIResourceSchema{
 		ObjectMeta: metav1.ObjectMeta{
-			ClusterName: "some-workspace",
-			Name:        "today.widgets.kcp.dev",
-			UID:         "todaywidgetsuid",
+			Name: "today.widgets.kcp.dev",
+			UID:  "todaywidgetsuid",
+			Annotations: map[string]string{
+				logicalcluster.LogicalClusterAnnotationKey: "some-workspace",
+			},
 		},
 		Spec: apisv1alpha1.APIResourceSchemaSpec{
 			Group: "kcp.dev",
@@ -402,28 +404,48 @@ func TestReconcileBinding(t *testing.T) {
 
 			apiExports := map[string]*apisv1alpha1.APIExport{
 				"some-export": {
-					ObjectMeta: metav1.ObjectMeta{ClusterName: "some-workspace", Name: "some-export"},
+					ObjectMeta: metav1.ObjectMeta{
+						Name: "some-export",
+						Annotations: map[string]string{
+							logicalcluster.LogicalClusterAnnotationKey: "some-workspace",
+						},
+					},
 					Spec: apisv1alpha1.APIExportSpec{
 						LatestResourceSchemas: []string{"today.widgets.kcp.dev"},
 					},
 					Status: apisv1alpha1.APIExportStatus{IdentityHash: "hash1"},
 				},
 				"conflict": {
-					ObjectMeta: metav1.ObjectMeta{ClusterName: "some-workspace", Name: "conflict"},
+					ObjectMeta: metav1.ObjectMeta{
+						Name: "conflict",
+						Annotations: map[string]string{
+							logicalcluster.LogicalClusterAnnotationKey: "some-workspace",
+						},
+					},
 					Spec: apisv1alpha1.APIExportSpec{
 						LatestResourceSchemas: []string{"another.widgets.other.io"},
 					},
 					Status: apisv1alpha1.APIExportStatus{IdentityHash: "hash2"},
 				},
 				"invalid-schema": {
-					ObjectMeta: metav1.ObjectMeta{ClusterName: "some-workspace", Name: "invalid-schema"},
+					ObjectMeta: metav1.ObjectMeta{
+						Name: "invalid-schema",
+						Annotations: map[string]string{
+							logicalcluster.LogicalClusterAnnotationKey: "some-workspace",
+						},
+					},
 					Spec: apisv1alpha1.APIExportSpec{
 						LatestResourceSchemas: []string{"invalid.schema.io"},
 					},
 					Status: apisv1alpha1.APIExportStatus{IdentityHash: "hash3"},
 				},
 				"no-identity-hash": {
-					ObjectMeta: metav1.ObjectMeta{ClusterName: "some-workspace", Name: "some-export"},
+					ObjectMeta: metav1.ObjectMeta{
+						Name: "some-export",
+						Annotations: map[string]string{
+							logicalcluster.LogicalClusterAnnotationKey: "some-workspace",
+						},
+					},
 					Spec: apisv1alpha1.APIExportSpec{
 						LatestResourceSchemas: []string{"today.widgets.kcp.dev"},
 					},
@@ -432,7 +454,12 @@ func TestReconcileBinding(t *testing.T) {
 
 			apiResourceSchemas := map[string]*apisv1alpha1.APIResourceSchema{
 				"invalid.schema.io": {
-					ObjectMeta: metav1.ObjectMeta{ClusterName: "some-workspace", Name: "invalid.schema.io"},
+					ObjectMeta: metav1.ObjectMeta{
+						Name: "invalid.schema.io",
+						Annotations: map[string]string{
+							logicalcluster.LogicalClusterAnnotationKey: "some-workspace",
+						},
+					},
 					Spec: apisv1alpha1.APIResourceSchemaSpec{
 						Versions: []apisv1alpha1.APIResourceVersion{
 							{
@@ -750,9 +777,11 @@ func TestCRDFromAPIResourceSchema(t *testing.T) {
 		"full schema": {
 			schema: &apisv1alpha1.APIResourceSchema{
 				ObjectMeta: metav1.ObjectMeta{
-					ClusterName: "my-cluster",
-					Name:        "my-name",
-					UID:         types.UID("my-uuid"),
+					Name: "my-name",
+					UID:  types.UID("my-uuid"),
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "my-cluster",
+					},
 				},
 				Spec: apisv1alpha1.APIResourceSchemaSpec{
 					Group: "my-group",
@@ -836,12 +865,12 @@ func TestCRDFromAPIResourceSchema(t *testing.T) {
 			},
 			want: &apiextensionsv1.CustomResourceDefinition{
 				ObjectMeta: metav1.ObjectMeta{
-					ClusterName: ShadowWorkspaceName.String(),
-					Name:        "my-uuid",
+					Name: "my-uuid",
 					Annotations: map[string]string{
-						apisv1alpha1.AnnotationBoundCRDKey:      "",
-						apisv1alpha1.AnnotationSchemaClusterKey: "my-cluster",
-						apisv1alpha1.AnnotationSchemaNameKey:    "my-name",
+						apisv1alpha1.AnnotationBoundCRDKey:         "",
+						apisv1alpha1.AnnotationSchemaClusterKey:    "my-cluster",
+						apisv1alpha1.AnnotationSchemaNameKey:       "my-name",
+						logicalcluster.LogicalClusterAnnotationKey: ShadowWorkspaceName.String(),
 					},
 				},
 				Spec: apiextensionsv1.CustomResourceDefinitionSpec{
@@ -977,8 +1006,7 @@ func (b *bindingBuilder) Build() *apisv1alpha1.APIBinding {
 }
 
 func (b *bindingBuilder) WithClusterName(clusterName string) *bindingBuilder {
-	//TODO (shawn-hurley): We may need to change how we set this
-	b.ClusterName = clusterName
+	logicalcluster.New(clusterName).Set(b)
 	return b
 }
 

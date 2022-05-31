@@ -397,8 +397,10 @@ func (c *Controller) ensureAPIResourceCompatibility(ctx context.Context, cluster
 	}
 	crdkey, err := cache.MetaNamespaceKeyFunc(&metav1.PartialObjectMetadata{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:        crdName,
-			ClusterName: clusterName.String(),
+			Name: crdName,
+			Annotations: map[string]string{
+				logicalcluster.LogicalClusterAnnotationKey: clusterName.String(),
+			},
 		},
 	})
 	if err != nil {
@@ -425,10 +427,10 @@ func (c *Controller) ensureAPIResourceCompatibility(ctx context.Context, cluster
 			}
 			newNegotiatedAPIResource = &apiresourcev1alpha1.NegotiatedAPIResource{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        negotiatedAPIResourceName,
-					ClusterName: clusterName.String(),
+					Name: negotiatedAPIResourceName,
 					Annotations: map[string]string{
-						apiresourcev1alpha1.APIVersionAnnotation: groupVersion.APIVersion(),
+						apiresourcev1alpha1.APIVersionAnnotation:   groupVersion.APIVersion(),
+						logicalcluster.LogicalClusterAnnotationKey: clusterName.String(),
 					},
 				},
 				Spec: apiresourcev1alpha1.NegotiatedAPIResourceSpec{
@@ -464,10 +466,10 @@ func (c *Controller) ensureAPIResourceCompatibility(ctx context.Context, cluster
 		if newNegotiatedAPIResource == nil {
 			newNegotiatedAPIResource = &apiresourcev1alpha1.NegotiatedAPIResource{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        negotiatedAPIResourceName,
-					ClusterName: clusterName.String(),
+					Name: negotiatedAPIResourceName,
 					Annotations: map[string]string{
-						apiresourcev1alpha1.APIVersionAnnotation: apiResourceImport.Spec.CommonAPIResourceSpec.GroupVersion.APIVersion(),
+						apiresourcev1alpha1.APIVersionAnnotation:   apiResourceImport.Spec.CommonAPIResourceSpec.GroupVersion.APIVersion(),
+						logicalcluster.LogicalClusterAnnotationKey: clusterName.String(),
 					},
 				},
 				Spec: apiresourcev1alpha1.NegotiatedAPIResourceSpec{
@@ -657,8 +659,10 @@ func (c *Controller) publishNegotiatedResource(ctx context.Context, clusterName 
 
 	crdKey, err := cache.MetaNamespaceKeyFunc(&metav1.PartialObjectMetadata{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:        crdName,
-			ClusterName: clusterName.String(),
+			Name: crdName,
+			Annotations: map[string]string{
+				logicalcluster.LogicalClusterAnnotationKey: clusterName.String(),
+			},
 		},
 	})
 	if err != nil {
@@ -681,8 +685,9 @@ func (c *Controller) publishNegotiatedResource(ctx context.Context, clusterName 
 				OwnerReferences: []metav1.OwnerReference{
 					NegotiatedAPIResourceAsOwnerReference(negotiatedApiResource),
 				},
-				//TODO: (shawn-hurley) We need to figure out how to set this
-				ClusterName: logicalcluster.From(negotiatedApiResource).String(),
+				Annotations: map[string]string{
+					logicalcluster.LogicalClusterAnnotationKey: logicalcluster.From(negotiatedApiResource).String(),
+				},
 			},
 			Spec: apiextensionsv1.CustomResourceDefinitionSpec{
 				Scope: negotiatedApiResource.Spec.Scope,
@@ -839,8 +844,10 @@ func (c *Controller) cleanupNegotiatedAPIResource(ctx context.Context, clusterNa
 
 	crdKey, err := cache.MetaNamespaceKeyFunc(&metav1.PartialObjectMetadata{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:        crdName,
-			ClusterName: clusterName.String(),
+			Name: crdName,
+			Annotations: map[string]string{
+				logicalcluster.LogicalClusterAnnotationKey: clusterName.String(),
+			},
 		},
 	})
 	if err != nil {

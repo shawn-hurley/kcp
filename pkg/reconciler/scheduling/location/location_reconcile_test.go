@@ -75,9 +75,9 @@ func TestLocationStatusReconciler(t *testing.T) {
 				"country":   "usa",
 			},
 			Annotations: map[string]string{
-				"scheduling.kcp.dev/labels": "continent=north-america country=usa",
+				"scheduling.kcp.dev/labels":                "continent=north-america country=usa",
+				logicalcluster.LogicalClusterAnnotationKey: "root:org:negotiation-workspace",
 			},
-			ClusterName: "root:org:negotiation-workspace",
 		},
 		Spec: schedulingv1alpha1.LocationSpec{
 			Resource: schedulingv1alpha1.GroupVersionResource{

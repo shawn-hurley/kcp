@@ -939,27 +939,29 @@ func setupWatchReactor(resource string, fromClient *dynamicfake.FakeDynamicClien
 }
 
 func namespace(name, clusterName string, labels, annotations map[string]string) *corev1.Namespace {
-	return &corev1.Namespace{
+	ns := &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        name,
-			ClusterName: clusterName,
 			Labels:      labels,
 			Annotations: annotations,
 		},
 	}
+	logicalcluster.New(clusterName).Set(ns)
+	return ns
 }
 
 func deployment(name, namespace, clusterName string, labels, annotations map[string]string, finalizers []string) *appsv1.Deployment {
-	return &appsv1.Deployment{
+	deployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        name,
 			Namespace:   namespace,
-			ClusterName: clusterName,
 			Labels:      labels,
 			Annotations: annotations,
 			Finalizers:  finalizers,
 		},
 	}
+	logicalcluster.New(clusterName).Set(deployment)
+	return deployment
 }
 
 type deploymentChange func(*appsv1.Deployment)

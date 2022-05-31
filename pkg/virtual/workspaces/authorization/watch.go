@@ -143,10 +143,10 @@ func (w *userWorkspaceWatcher) GroupMembershipChanged(workspaceName string, user
 	var workspace workspaceapibeta1.Workspace
 	projection.ProjectClusterWorkspaceToWorkspace(&workspaceapi.ClusterWorkspace{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:        workspaceName,
-			ClusterName: w.lclusterName.String(),
+			Name: workspaceName,
 		},
 	}, &workspace)
+	w.lclusterName.Set(&workspace)
 
 	switch {
 	// this means that we were removed from the workspace

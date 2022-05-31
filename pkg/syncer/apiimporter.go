@@ -212,13 +212,14 @@ func (i *APIImporter) ImportAPIs(ctx context.Context) {
 			} else {
 				apiResourceImportName = apiResourceImportName + gvr.Group
 			}
-
-			clusterKey, err := cache.MetaNamespaceKeyFunc(&metav1.PartialObjectMetadata{
+			partialObjectMetadata := &metav1.PartialObjectMetadata{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        i.location,
-					ClusterName: i.logicalClusterName.String(),
+					Name: i.location,
 				},
-			})
+			}
+			i.logicalClusterName.Set(partialObjectMetadata)
+
+			clusterKey, err := cache.MetaNamespaceKeyFunc(partialObjectMetadata)
 			if err != nil {
 				klog.Errorf("error creating APIResourceImport %s: %v", apiResourceImportName, err)
 				continue
@@ -243,8 +244,7 @@ func (i *APIImporter) ImportAPIs(ctx context.Context) {
 			}
 			apiResourceImport := &apiresourcev1alpha1.APIResourceImport{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        apiResourceImportName,
-					ClusterName: i.logicalClusterName.String(),
+					Name: apiResourceImportName,
 					OwnerReferences: []metav1.OwnerReference{
 						clusterAsOwnerReference(cluster, true),
 					},
@@ -267,6 +267,7 @@ func (i *APIImporter) ImportAPIs(ctx context.Context) {
 					},
 				},
 			}
+			i.logicalClusterName.Set(apiResourceImport)
 			if err := apiResourceImport.Spec.SetSchema(crdVersion.Schema.OpenAPIV3Schema); err != nil {
 				klog.Errorf("Error setting schema: %v", err)
 				continue

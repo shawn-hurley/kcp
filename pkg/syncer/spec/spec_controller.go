@@ -147,10 +147,10 @@ func NewSpecSyncer(gvrs []schema.GroupVersionResource, workloadClusterLogicalClu
 				}
 				klog.V(4).InfoS("found", "NamespaceLocator", nsLocator)
 				m := &metav1.ObjectMeta{
-					ClusterName: nsLocator.LogicalCluster.String(),
-					Namespace:   nsLocator.Namespace,
-					Name:        name,
+					Namespace: nsLocator.Namespace,
+					Name:      name,
 				}
+				nsLocator.LogicalCluster.Set(m)
 				c.AddToQueue(gvr, m)
 			},
 		})

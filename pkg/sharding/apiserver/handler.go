@@ -25,6 +25,8 @@ import (
 	"net/http/httputil"
 	"time"
 
+	"github.com/kcp-dev/logicalcluster"
+
 	"k8s.io/apiextensions-apiserver/pkg/apiserver"
 	"k8s.io/apiextensions-apiserver/pkg/crdserverscheme"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -132,7 +134,7 @@ func (h *ShardedHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			switch m := obj.(type) {
 			case metav1.Object:
 				return metav1.TableRow{
-					Cells:  []interface{}{m.GetClusterName(), m.GetNamespace(), m.GetName()},
+					Cells:  []interface{}{logicalcluster.From(m), m.GetNamespace(), m.GetName()},
 					Object: runtime.RawExtension{Object: obj},
 				}, nil
 			default:

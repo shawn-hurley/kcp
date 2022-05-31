@@ -21,6 +21,8 @@ import (
 	"sort"
 	"testing"
 
+	"github.com/kcp-dev/logicalcluster"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	workspaceapi "github.com/kcp-dev/kcp/pkg/apis/tenancy/v1alpha1"
@@ -48,8 +50,10 @@ func TestReconciler(t *testing.T) {
 			},
 			workloadCluster: &workloadv1alpha1.WorkloadCluster{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test-cluster",
-					ClusterName: "demo:root:yourworkspace",
+					Name: "test-cluster",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "demo:root:yourworkspace",
+					},
 				},
 				Spec: workloadv1alpha1.WorkloadClusterSpec{
 					Unschedulable: false,
@@ -61,8 +65,10 @@ func TestReconciler(t *testing.T) {
 			},
 			expectedWorkloadCluster: &workloadv1alpha1.WorkloadCluster{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test-cluster",
-					ClusterName: "demo:root:yourworkspace",
+					Name: "test-cluster",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "demo:root:yourworkspace",
+					},
 				},
 				Spec: workloadv1alpha1.WorkloadClusterSpec{
 					Unschedulable: false,
@@ -110,8 +116,10 @@ func TestReconciler(t *testing.T) {
 			},
 			workloadCluster: &workloadv1alpha1.WorkloadCluster{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test-cluster",
-					ClusterName: "demo:root:yourworkspace",
+					Name: "test-cluster",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "demo:root:yourworkspace",
+					},
 				},
 				Spec: workloadv1alpha1.WorkloadClusterSpec{
 					Unschedulable: false,
@@ -123,8 +131,10 @@ func TestReconciler(t *testing.T) {
 			},
 			expectedWorkloadCluster: &workloadv1alpha1.WorkloadCluster{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test-cluster",
-					ClusterName: "demo:root:yourworkspace",
+					Name: "test-cluster",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "demo:root:yourworkspace",
+					},
 				},
 				Spec: workloadv1alpha1.WorkloadClusterSpec{
 					Unschedulable: false,
@@ -178,8 +188,10 @@ func TestReconciler(t *testing.T) {
 			},
 			workloadCluster: &workloadv1alpha1.WorkloadCluster{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test-cluster",
-					ClusterName: "demo:root:yourworkspace",
+					Name: "test-cluster",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "demo:root:yourworkspace",
+					},
 				},
 				Spec: workloadv1alpha1.WorkloadClusterSpec{
 					Unschedulable: false,
@@ -191,8 +203,10 @@ func TestReconciler(t *testing.T) {
 			},
 			expectedWorkloadCluster: &workloadv1alpha1.WorkloadCluster{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test-cluster",
-					ClusterName: "demo:root:yourworkspace",
+					Name: "test-cluster",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "demo:root:yourworkspace",
+					},
 				},
 				Spec: workloadv1alpha1.WorkloadClusterSpec{
 					Unschedulable: false,
@@ -216,8 +230,10 @@ func TestReconciler(t *testing.T) {
 			workspaceShards: []*workspaceapi.ClusterWorkspaceShard{},
 			workloadCluster: &workloadv1alpha1.WorkloadCluster{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test-cluster",
-					ClusterName: "demo:root:yourworkspace",
+					Name: "test-cluster",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "demo:root:yourworkspace",
+					},
 				},
 				Spec: workloadv1alpha1.WorkloadClusterSpec{
 					Unschedulable: false,
@@ -229,8 +245,10 @@ func TestReconciler(t *testing.T) {
 			},
 			expectedWorkloadCluster: &workloadv1alpha1.WorkloadCluster{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test-cluster",
-					ClusterName: "demo:root:yourworkspace",
+					Name: "test-cluster",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "demo:root:yourworkspace",
+					},
 				},
 				Spec: workloadv1alpha1.WorkloadClusterSpec{
 					Unschedulable: false,
@@ -254,8 +272,10 @@ func TestReconciler(t *testing.T) {
 			},
 			workloadCluster: &workloadv1alpha1.WorkloadCluster{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test-cluster",
-					ClusterName: "demo:root:yourworkspace",
+					Name: "test-cluster",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "demo:root:yourworkspace",
+					},
 				},
 				Spec: workloadv1alpha1.WorkloadClusterSpec{
 					Unschedulable: false,
@@ -277,8 +297,10 @@ func TestReconciler(t *testing.T) {
 			},
 			expectedWorkloadCluster: &workloadv1alpha1.WorkloadCluster{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        "test-cluster",
-					ClusterName: "demo:root:yourworkspace",
+					Name: "test-cluster",
+					Annotations: map[string]string{
+						logicalcluster.LogicalClusterAnnotationKey: "demo:root:yourworkspace",
+					},
 				},
 				Spec: workloadv1alpha1.WorkloadClusterSpec{
 					Unschedulable: false,
